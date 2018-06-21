@@ -82,6 +82,9 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
+    //Useful to understand weight of r/w ops
+    int totreadwrite = 0;
+
 
     auto start = std::chrono::high_resolution_clock::now();
 
@@ -99,12 +102,16 @@ int main(int argc, char *argv[]) {
 
     //Loop on all images
     for (auto & p : std::experimental::filesystem::directory_iterator(dirInput)){
+        auto startloading = std::chrono::high_resolution_clock::now();
         imginpname_actual = imginpname;
         file_inpimg = cimg_option("-impimg",(imginpname_actual.append(p.path().filename())).c_str(),"Input Image");
 
         
         //Init input image and output image
         imginp = cil::CImg<unsigned char>(file_inpimg);
+        auto elapsedloading = std::chrono::high_resolution_clock::now() - startloading;
+        auto msecloading = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedloading).count();
+        totreadwrite += msecloading;
 
         //Verify if we have to save imgs in a folder or not
         if(dirOutputName.length() < 4){
@@ -112,7 +119,6 @@ int main(int argc, char *argv[]) {
             std::string imginpstring = p.path().filename().string();
             imginpstring.erase(imginpstring.find("."),4);
             fileoutputname = imginpstring.append("_marked.jpg");
-            std::cout << "DEBUG OUTPUTNAME: " << fileoutputname << "\n";
             file_outimg = cimg_option("-outimg",fileoutputname.c_str(),"Output Image");
         }
         else{
@@ -127,17 +133,24 @@ int main(int argc, char *argv[]) {
 
         computeWatermarkedImg(markimg, imginp, imgout);
 
+        auto startsaving = std::chrono::high_resolution_clock::now();
         //Save outputimg
         if(file_outimg) imgout.save(file_outimg);
+        auto elapsedsaving = std::chrono::high_resolution_clock::now() - startsaving;
+        auto msecsaving = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedsaving).count();
+        totreadwrite += msecsaving;
 
         std::cout << "img marked and saved successfully...\n";
     }
 
-    auto elapsed = std::chrono::high_resolution_clock::now() - start;
-    auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count();
+    auto totelapsed = std::chrono::high_resolution_clock::now() - start;
+    auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(totelapsed).count();
 
     std::cout << "msec elapsed: " << msec << "\n";
     std::cout << "sec elapsed: " << (msec/1000) << "\n";
+
+    std::cout << "msec elapsed reading and writing: " << totreadwrite << "\n";
+    std::cout << "sec elapsed reading and writing: " << (totreadwrite/1000) << "\n";
 
     return 0;
 }

@@ -30,3 +30,8 @@
 *.exe
 *.out
 *.app
+imgWatermarkSeq
+
+# Images
+/img_inp
+/img_out

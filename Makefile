@@ -7,7 +7,7 @@ FF_ROOT		= /usr/local/include
 endif
 
 CXX		= g++ -std=c++11 -g #-DNO_DEFAULT_MAPPING
-INCLUDES	= -I $(FF_ROOT) $(CIMG_ROOT) 
+INCLUDES	= -I $(FF_ROOT)
 CXXFLAGS  	= 
 
 LDFLAGS 	= -L/usr/X11R6/lib -lm -lpthread -lX11 -lstdc++fs
@@ -18,8 +18,7 @@ TARGETS		= imgWatermarkSeq
 .PHONY: all clean cleanall
 .SUFFIXES: .cpp 
 
-
-%: %.cpp
+%: %.cpp watermarkUtil.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $(OPTFLAGS) -o $@ $< $(LDFLAGS)
 
 all		: $(TARGETS)

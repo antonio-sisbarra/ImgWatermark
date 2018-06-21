@@ -9,6 +9,7 @@
 #include <experimental/filesystem>
 #include "CImg-2.2.4_pre060418/CImg.h"
 #include <unistd.h>
+#include "watermarkUtil.cpp"
 
 #define GetCurrentDir getcwd
 
@@ -81,6 +82,7 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
+
     auto start = std::chrono::high_resolution_clock::now();
 
     //Read markimgfile and initialize input img
@@ -92,7 +94,7 @@ int main(int argc, char *argv[]) {
     cil::CImg<unsigned char> imginp, imgout;
 
     //Useful for reading imgs
-    std::string imginpname(argv[2]), imginpname_actual, dirOutputName_actual;
+    std::string imginpname(argv[2]), imginpname_actual, dirOutputName_actual, fileoutputname;
     imginpname.append("/");
 
     //Loop on all images
@@ -109,8 +111,9 @@ int main(int argc, char *argv[]) {
             //Removing the format .jpg from the string
             std::string imginpstring = p.path().filename().string();
             imginpstring.erase(imginpstring.find("."),4);
-            const char* fileoutputname = (imginpstring.append("_marked.jpg")).c_str();
-            file_outimg = cimg_option("-outimg",fileoutputname,"Output Image");
+            fileoutputname = imginpstring.append("_marked.jpg");
+            std::cout << "DEBUG OUTPUTNAME: " << fileoutputname << "\n";
+            file_outimg = cimg_option("-outimg",fileoutputname.c_str(),"Output Image");
         }
         else{
             dirOutputName_actual = dirOutputName;
@@ -122,33 +125,7 @@ int main(int argc, char *argv[]) {
         int r, g, b, rmark, gmark, bmark, grayinpvalue, grayavgvalue;
         int graymarkvalue;
 
-        //Compute the image with the watermark
-        cimg_forXY(markimg, x, y){
-            //Gray value of the markimg
-            rmark = (int)markimg(x, y, 0);
-            gmark = (int)markimg(x, y, 1);
-            bmark = (int)markimg(x, y, 2);
-            graymarkvalue = (int)(0.33*rmark + 0.33*gmark + 0.33*bmark);
-
-            //get RGB values of input image
-            r = (int)imginp(x, y, 0);
-            g = (int)imginp(x, y, 1);
-            b = (int)imginp(x, y, 2);
-            grayinpvalue = (int)(0.33*r + 0.33*g + 0.33*b);
-
-            //modify pixel iff there is a black pixel in watermark
-            if(graymarkvalue <= 60){
-                grayavgvalue = (int)((grayinpvalue + 255) / 2);
-                imgout(x, y, 0) = grayavgvalue;
-                imgout(x, y, 1) = grayavgvalue;
-                imgout(x, y, 2) = grayavgvalue;
-            }
-            else{
-                imgout(x, y, 0) = imginp(x, y, 0);
-                imgout(x, y, 1) = imginp(x, y, 1);
-                imgout(x, y, 2) = imginp(x, y, 2);
-            }
-        }
+        computeWatermarkedImg(markimg, imginp, imgout);
 
         //Save outputimg
         if(file_outimg) imgout.save(file_outimg);

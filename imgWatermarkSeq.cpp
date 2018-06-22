@@ -85,6 +85,9 @@ int main(int argc, char *argv[]) {
     //Useful to understand weight of r/w ops
     int totreadwrite = 0;
 
+    //To count the photos marked
+    int totphotomarked = 0;
+
 
     auto start = std::chrono::high_resolution_clock::now();
 
@@ -140,6 +143,7 @@ int main(int argc, char *argv[]) {
         auto msecsaving = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedsaving).count();
         totreadwrite += msecsaving;
 
+        totphotomarked++;
         std::cout << "img marked and saved successfully...\n";
     }
 
@@ -151,6 +155,8 @@ int main(int argc, char *argv[]) {
 
     std::cout << "msec elapsed reading and writing: " << totreadwrite << "\n";
     std::cout << "sec elapsed reading and writing: " << (totreadwrite/1000) << "\n";
+
+    std::cout << "total number of photos marked: " << totphotomarked;
 
     return 0;
 }

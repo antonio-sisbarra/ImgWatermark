@@ -135,8 +135,10 @@ int main(int argc, char *argv[]) {
         int graymarkvalue;
 
         //If there is a problem in marking img
-        if(computeWatermarkedImg(markimg, imginp, imgout) == -1)
+        if(computeWatermarkedImg(markimg, imginp, imgout) == -1){
+            std::cerr << "Problem in marking an img\n";
             continue;
+        }
 
         auto startsaving = std::chrono::high_resolution_clock::now();
         //Save outputimg

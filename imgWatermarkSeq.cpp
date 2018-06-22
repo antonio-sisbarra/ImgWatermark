@@ -130,7 +130,7 @@ int main(int argc, char *argv[]) {
     std::cout << "msec elapsed reading and writing: " << totreadwrite << "\n";
     std::cout << "sec elapsed reading and writing: " << (totreadwrite/1000) << "\n";
 
-    std::cout << "total number of photos marked: " << totphotomarked;
+    std::cout << "total number of photos marked: " << totphotomarked << "\n";
 
     return 0;
 }

@@ -5,11 +5,39 @@ using namespace cimg_library;
 //Make the watermark, returns -1 if there is an error, 1 otherwise
 int computeWatermarkedImg(cil::CImg<unsigned char>& mark, cil::CImg<unsigned char>& imginp, cil::CImg<unsigned char>& imgout){
 
+    //Version for img with one channel
+    if(imginp.spectrum() < 3){
+        cimg_forXY(mark, x, y){
+
+            //Gray value of the markimg
+            int rmark = (int)mark(x, y, 0);
+            int gmark = (int)mark(x, y, 1);
+            int bmark = (int)mark(x, y, 2);
+            int graymarkvalue = (int)(0.33*rmark + 0.33*gmark + 0.33*bmark);
+
+            //get color value of input image
+            int grayinpvalue = (int)imginp(x, y, 0);
+
+            //modify pixel iff there is a black pixel in watermark
+            if(graymarkvalue <= 60){
+                int grayavgvalue = (int)((grayinpvalue + 255) / 2);
+                imgout(x, y, 0) = grayavgvalue;
+                imgout(x, y, 1) = grayavgvalue;
+                imgout(x, y, 2) = grayavgvalue;
+            }
+            else{
+                imgout(x, y, 0) = imginp(x, y, 0);
+                imgout(x, y, 1) = imginp(x, y, 1);
+                imgout(x, y, 2) = imginp(x, y, 2);
+            }
+
+        }
+
+        return 1;
+    }
+
     //Compute the image with the watermark
     cimg_forXY(mark, x, y){
-        //Verify if imginp has 3 channels (otherwise is not correct for our work)
-        if(imginp.spectrum() < 3)
-            return -1;
 
         //Gray value of the markimg
         int rmark = (int)mark(x, y, 0);
@@ -36,8 +64,7 @@ int computeWatermarkedImg(cil::CImg<unsigned char>& mark, cil::CImg<unsigned cha
             imgout(x, y, 2) = imginp(x, y, 2);
         }
 
-        return 1;
     }
 
-
+    return 1;
 }

@@ -18,7 +18,7 @@ TARGETS		= imgWatermarkSeq
 .PHONY: all clean cleanall
 .SUFFIXES: .cpp 
 
-imgWatermarkSeq: imgWatermarkSeq.cpp watermarkUtil.cpp
+imgWatermarkSeq: imgWatermarkSeq.cpp watermarkUtil.cpp utils.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $(OPTFLAGS) -o $@ $< $(LDFLAGS)
 
 all		: $(TARGETS)

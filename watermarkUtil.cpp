@@ -2,10 +2,15 @@
 
 using namespace cimg_library;
 
-void computeWatermarkedImg(cil::CImg<unsigned char>& mark, cil::CImg<unsigned char>& imginp, cil::CImg<unsigned char>& imgout){
+//Make the watermark, returns -1 if there is an error, 1 otherwise
+int computeWatermarkedImg(cil::CImg<unsigned char>& mark, cil::CImg<unsigned char>& imginp, cil::CImg<unsigned char>& imgout){
 
     //Compute the image with the watermark
     cimg_forXY(mark, x, y){
+        //Verify if imginp has 3 channels (otherwise is not correct for our work)
+        if(imginp.spectrum() < 3)
+            return -1;
+
         //Gray value of the markimg
         int rmark = (int)mark(x, y, 0);
         int gmark = (int)mark(x, y, 1);
@@ -30,6 +35,8 @@ void computeWatermarkedImg(cil::CImg<unsigned char>& mark, cil::CImg<unsigned ch
             imgout(x, y, 1) = imginp(x, y, 1);
             imgout(x, y, 2) = imginp(x, y, 2);
         }
+
+        return 1;
     }
 
 

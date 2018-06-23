@@ -46,7 +46,12 @@ int main(int argc, char *argv[]) {
     //dirOutputName is useful for saving the images in output. It's not the path, but just a name
     if (argc == 5){ 
         dirOutput = GetCurrentWorkingDir().append("/").append(argv[4]);
-        dirOutputName = std::string(argv[4]).append("/");
+
+        //Check if arg ends with /
+        if(dirOutput.back() != '/')
+            dirOutputName = std::string(argv[4]).append("/");
+        else 
+            dirOutputName = std::string(argv[4]);
     }
     else{
         dirOutput = GetCurrentWorkingDir();
@@ -75,7 +80,10 @@ int main(int argc, char *argv[]) {
 
     //Useful for reading imgs
     std::string imginpname(argv[3]);
-    imginpname.append("/");
+
+    //Check if arg ends with /
+    if(imginpname.back() != '/')
+        imginpname.append("/");
 
     //Create a queue of input for each worker of the farm
     std::vector<myqueue<std::string*>*> vecQueues;
@@ -135,7 +143,7 @@ int main(int argc, char *argv[]) {
                 }
 
                 // write phase
-                if(file_outimg) imgout.save_jpeg(file_outimg);
+                if(file_outimg) imgout.save(file_outimg);
 
                 auto elapsedTask = std::chrono::high_resolution_clock::now() - startTask;
                 auto usec    = std::chrono::duration_cast<std::chrono::microseconds>(elapsedTask).count();

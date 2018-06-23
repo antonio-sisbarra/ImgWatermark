@@ -31,7 +31,12 @@ int main(int argc, char *argv[]) {
     //dirOutputName is useful for saving the images in output. It's not the path, but just a name
     if (argc == 4){ 
         dirOutput = GetCurrentWorkingDir().append("/").append(argv[3]);
-        dirOutputName = std::string(argv[3]).append("/");
+
+        //Check if arg ends with /
+        if(dirOutput.back() != '/')
+            dirOutputName = std::string(argv[3]).append("/");
+        else
+            dirOutputName = std::string(argv[3]);
     }
     else{
         dirOutput = GetCurrentWorkingDir();
@@ -68,7 +73,10 @@ int main(int argc, char *argv[]) {
 
     //Useful for reading imgs
     std::string imginpname(argv[2]), imginpname_actual, dirOutputName_actual, fileoutputname;
-    imginpname.append("/");
+
+    //Check if arg ends with /
+    if(imginpname.back() != '/')
+        imginpname.append("/");
 
     std::cout << "Working on imgs...\n";
 
@@ -109,7 +117,7 @@ int main(int argc, char *argv[]) {
 
         auto startsaving = std::chrono::high_resolution_clock::now();
         //Save outputimg
-        if(file_outimg) imgout.save_jpeg(file_outimg);
+        if(file_outimg) imgout.save(file_outimg);
         auto elapsedsaving = std::chrono::high_resolution_clock::now() - startsaving;
         auto msecsaving = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedsaving).count();
         totreadwrite += msecsaving;

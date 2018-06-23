@@ -16,9 +16,6 @@
 //For uutil functions
 #include "utils.cpp"
 
-#define GetCurrentDir getcwd
-
-
 using namespace cimg_library;
 
 
@@ -26,7 +23,7 @@ using namespace cimg_library;
 int main(int argc, char *argv[]) {   
     std::string markImgFilename, dirInput, dirOutput, dirOutputName;
 
-    if (argc<3 && argc>4) {
+    if (argc<3 || argc>4) {
         std::cerr << "use: " << argv[0]  << " markimgfile dirinput [diroutput] \n";
         return -1;
     }
@@ -53,7 +50,7 @@ int main(int argc, char *argv[]) {
     }
 
     //Useful to understand weight of r/w ops
-    int totreadwrite = 0;
+    int totreadwrite = 0, totread = 0, totwrite = 0;
 
     //To count the photos marked
     int totphotomarked = 0;
@@ -85,6 +82,7 @@ int main(int argc, char *argv[]) {
         auto elapsedloading = std::chrono::high_resolution_clock::now() - startloading;
         auto msecloading = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedloading).count();
         totreadwrite += msecloading;
+        totread += msecloading;
 
         //Verify if we have to save imgs in a folder or not
         if(dirOutputName.length() < 4){
@@ -101,9 +99,6 @@ int main(int argc, char *argv[]) {
 
         imgout = cil::CImg<unsigned char>(imginp); //initialize with input pixels
 
-        int r, g, b, rmark, gmark, bmark, grayinpvalue, grayavgvalue;
-        int graymarkvalue;
-
         //If there is a problem in marking img
         if(computeWatermarkedImg(markimg, imginp, imgout) == -1){
             std::cerr << "Problem in marking an img\n";
@@ -116,6 +111,7 @@ int main(int argc, char *argv[]) {
         auto elapsedsaving = std::chrono::high_resolution_clock::now() - startsaving;
         auto msecsaving = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedsaving).count();
         totreadwrite += msecsaving;
+        totwrite += msecsaving;
 
         totphotomarked++;
         std::cout << "img marked and saved successfully...\n";
@@ -129,6 +125,12 @@ int main(int argc, char *argv[]) {
 
     std::cout << "msec elapsed reading and writing: " << totreadwrite << "\n";
     std::cout << "sec elapsed reading and writing: " << (totreadwrite/1000) << "\n";
+
+    std::cout << "msec elapsed reading: " << totread << "\n";
+    std::cout << "sec elapsed reading: " << (totread/1000) << "\n";
+
+    std::cout << "msec elapsed writing: " << totwrite << "\n";
+    std::cout << "sec elapsed writing: " << (totwrite/1000) << "\n";
 
     std::cout << "total number of photos marked: " << totphotomarked << "\n";
 

@@ -13,12 +13,15 @@ CXXFLAGS  	=
 LDFLAGS 	= -L/usr/X11R6/lib -lm -lpthread -lX11 -lstdc++fs
 OPTFLAGS	= -O3 -finline-functions -DNDEBUG
 
-TARGETS		= imgWatermarkSeq
+TARGETS		= imgWatermarkSeq      \
+		  imgWatermarkSimpleFarm
 
 .PHONY: all clean cleanall
 .SUFFIXES: .cpp 
 
 imgWatermarkSeq: imgWatermarkSeq.cpp watermarkUtil.cpp utils.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) $(OPTFLAGS) -o $@ $< $(LDFLAGS)
+imgWatermarkSimpleFarm: imgWatermarkSimpleFarm.cpp watermarkUtil.cpp utils.cpp myqueue.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $(OPTFLAGS) -o $@ $< $(LDFLAGS)
 
 all		: $(TARGETS)

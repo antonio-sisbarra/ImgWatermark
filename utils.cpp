@@ -15,6 +15,11 @@ bool checkParams(const char *markFileName, const char *inpPath, const char *outP
         return false; //cannot access to file
     }
 
+    if( (info.st_mode & S_IFDIR) ){
+        std::cerr << "Mark is a directory\n";
+        return false; //is a directory
+    }
+
     if(stat( inpPath, &info ) != 0){
         std::cerr << "Cannot access to directory input\n";
         return false; //cannot access to directory

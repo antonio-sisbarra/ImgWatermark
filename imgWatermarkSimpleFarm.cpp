@@ -23,7 +23,7 @@
 #include "myqueue.cpp"
 
 //Definition of EOS
-#define EOS nullptr
+#define EOS "null"
 
 using namespace cimg_library;
 
@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
     int nw;
 
     if (argc<4 || argc>5) {
-        std::cerr << "use: " << argv[0]  << " pardegree markimgfile dirinput [diroutput] \n";
+        std::cerr << "use: " << argv[0]  << " pardegree markimgfile dirinput [diroutput] \n dirinput and diroutput without / \n";
         return -1;
     }
 
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
     std::cout << "Reading markimg ok, now starting reading images...\n";
 
     //Useful for reading imgs
-    std::string imginpname(argv[2]);
+    std::string imginpname(argv[3]);
     imginpname.append("/");
 
     //Create a queue of input for each worker of the farm
@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
         while(keepon) {
             std::string* imgFileName = inpQueue->pop();
             // if we got something
-            if(imgFileName != EOS) {
+            if(*imgFileName != EOS) {
 
                 // compute task time
                 auto startTask   = std::chrono::high_resolution_clock::now();
@@ -153,12 +153,13 @@ int main(int argc, char *argv[]) {
 
                 // otherwise terminate
                 keepon = false;
-                std::cout << "Thread " << ti << " computed " << tn << " tasks "
-                    << " (min max avg = " << usecmin << " " << usecmax
-                    << " " << usectot/tn << ") "
-                    << "\n";
-                totphotomarked += tn;
-                
+                if(tn != 0){
+                    std::cout << "Thread " << ti << " computed " << tn << " tasks "
+                        << " (min max avg = " << usecmin << " " << usecmax
+                        << " " << usectot/tn << ") "
+                        << "\n";
+                    totphotomarked += tn;
+                }
             }
         }
     };
@@ -183,6 +184,11 @@ int main(int argc, char *argv[]) {
         (*(vecQueues.at(circularInd))).push(photoFileName);
         circularInd = (circularInd + 1) % nw;
 
+    }
+
+    //Send EOS to all queues
+    for(int i=0; i<nw; i++){
+        vecQueues.at(i)->push(new std::string(EOS));
     }
 
     // await termination

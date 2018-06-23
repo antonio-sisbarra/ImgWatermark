@@ -22,8 +22,8 @@ class myqueue{
         T pop(){
             std::unique_lock<std::mutex> lock(this->mutex);
             this->cond.wait(lock, [=]{return !this->queue.empty();});
-            T res(std::move(this->queue.back()));
-            this->queue.pop_back();
+            T res(std::move(this->queue.front()));
+            this->queue.pop_front();
             return res;
         }
 };

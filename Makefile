@@ -19,12 +19,11 @@ TARGETS		= imgWatermarkSeq      \
 .PHONY: all clean cleanall
 .SUFFIXES: .cpp 
 
+all		: $(TARGETS)
 imgWatermarkSeq: imgWatermarkSeq.cpp watermarkUtil.cpp utils.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $(OPTFLAGS) -o $@ $< $(LDFLAGS)
 imgWatermarkSimpleFarm: imgWatermarkSimpleFarm.cpp watermarkUtil.cpp utils.cpp myqueue.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $(OPTFLAGS) -o $@ $< $(LDFLAGS)
-
-all		: $(TARGETS)
 clean		: 
 	rm -f $(TARGETS)
 cleanall	: clean

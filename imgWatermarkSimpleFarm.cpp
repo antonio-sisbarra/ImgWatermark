@@ -135,7 +135,7 @@ int main(int argc, char *argv[]) {
                 }
 
                 // write phase
-                if(file_outimg) imgout.save(file_outimg);
+                if(file_outimg) imgout.save_jpeg(file_outimg);
 
                 auto elapsedTask = std::chrono::high_resolution_clock::now() - startTask;
                 auto usec    = std::chrono::duration_cast<std::chrono::microseconds>(elapsedTask).count();

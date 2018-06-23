@@ -70,6 +70,8 @@ int main(int argc, char *argv[]) {
     std::string imginpname(argv[2]), imginpname_actual, dirOutputName_actual, fileoutputname;
     imginpname.append("/");
 
+    std::cout << "Working on imgs...\n";
+
     //Loop on all images
     for (auto & p : std::experimental::filesystem::directory_iterator(dirInput)){
         auto startloading = std::chrono::high_resolution_clock::now();
@@ -114,7 +116,6 @@ int main(int argc, char *argv[]) {
         totwrite += msecsaving;
 
         totphotomarked++;
-        std::cout << "img marked and saved successfully...\n";
     }
 
     auto totelapsed = std::chrono::high_resolution_clock::now() - start;

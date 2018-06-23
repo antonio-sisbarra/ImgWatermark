@@ -168,14 +168,14 @@ int main(int argc, char *argv[]) {
     //For elapsed time of the program
     auto start = std::chrono::high_resolution_clock::now();
 
+    std::string* photoFileName; 
+    int circularInd = 0; //for round robin policy
+
     // create executor threads
     std::vector<std::thread> tid;
     for(int i=0; i<nw; i++) {
         tid.push_back(std::thread(body, i, vecQueues.at(i))); 
     }
-
-    std::string* photoFileName; 
-    int circularInd = 0; //for round robin policy
 
     // fill the input queues with the imgs
     for (auto & p : std::experimental::filesystem::directory_iterator(dirInput)){
@@ -190,6 +190,8 @@ int main(int argc, char *argv[]) {
     for(int i=0; i<nw; i++){
         vecQueues.at(i)->push(new std::string(EOS));
     }
+
+    std::cout << "Working on imgs...\n";
 
     // await termination
     for(int i=0; i<nw; i++)

@@ -87,7 +87,11 @@ int main(int argc, char *argv[]) {
 
     //Each worker must contain a pipe, so we create parDegree / 2 queues (for workers of the farm)
     std::vector<myqueue<std::string*>*> vecQueues;
-    int nWorkersFarm = (int)(parDegree/2);
+    int nWorkersFarm;
+    if(parDegree % 2 == 0)
+        nWorkersFarm = (int)(parDegree/2);
+    else
+        nWorkersFarm = ((int)(parDegree/2)) + 1;
     if(nWorkersFarm == 0) nWorkersFarm++;
 
     //Create a queue of input for each worker of the farm

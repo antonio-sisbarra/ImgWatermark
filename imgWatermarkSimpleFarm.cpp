@@ -106,68 +106,75 @@ int main(int argc, char *argv[]) {
         cil::CImg<unsigned char> imginp, imgout;
 
         while(keepon) {
-            std::string* imgFileName = inpQueue->pop();
-            // if we got something
-            if(*imgFileName != EOS) {
+            try{
 
-                // compute task time
-                auto startTask   = std::chrono::high_resolution_clock::now();
-                
-                /* TASK JOB */
-                // read phase
-                imginpname_actual = imginpname;
-                file_inpimg = cimg_option("-impimg",(imginpname_actual.append(*imgFileName)).c_str(),"Input Image");
-                imginp = cil::CImg<unsigned char>(file_inpimg);
+                std::string* imgFileName = inpQueue->pop();
+                // if we got something
+                if(*imgFileName != EOS) {
 
-                //Verify if we have to save imgs in a folder or not
-                if(dirOutputName.length() < 4){
-                    //Removing the format .jpg from the string
-                    std::string imginpstring = *imgFileName;
-                    imginpstring.erase(imginpstring.find("."),4);
-                    fileoutputname = imginpstring.append("_marked.jpg");
-                    file_outimg = cimg_option("-outimg",fileoutputname.c_str(),"Output Image");
+                    // compute task time
+                    auto startTask   = std::chrono::high_resolution_clock::now();
+                    
+                    /* TASK JOB */
+                    // read phase
+                    imginpname_actual = imginpname;
+                    file_inpimg = cimg_option("-impimg",(imginpname_actual.append(*imgFileName)).c_str(),"Input Image");
+                    imginp = cil::CImg<unsigned char>(file_inpimg);
+
+                    //Verify if we have to save imgs in a folder or not
+                    if(dirOutputName.length() < 4){
+                        //Removing the format .jpg from the string
+                        std::string imginpstring = *imgFileName;
+                        imginpstring.erase(imginpstring.find("."),4);
+                        fileoutputname = imginpstring.append("_marked.jpg");
+                        file_outimg = cimg_option("-outimg",fileoutputname.c_str(),"Output Image");
+                    }
+                    else{
+                        dirOutputName_actual = dirOutputName;
+                        file_outimg = cimg_option("-outimg",(dirOutputName_actual.append(*imgFileName)).c_str(),"Output Image");
+                    }
+
+                    //Preparing outimg
+                    imgout = cil::CImg<unsigned char>(imginp);
+
+                    // mark phase
+                    //If there is a problem in marking img
+                    if(computeWatermarkedImg(markimg, imginp, imgout) == -1){
+                        std::cerr << "Problem in marking an img\n";
+                        continue;
+                    }
+
+                    // write phase
+                    if(file_outimg) imgout.save(file_outimg);
+
+                    auto elapsedTask = std::chrono::high_resolution_clock::now() - startTask;
+                    auto usec    = std::chrono::duration_cast<std::chrono::microseconds>(elapsedTask).count();
+                    if(usec < usecmin)
+                    usecmin = usec;
+                    if(usec > usecmax)
+                    usecmax = usec;
+                    usectot += usec;
+                    
+                    //Increment counter of imgs marked
+                    tn++;
+
+                } 
+                else {
+
+                    // otherwise terminate
+                    keepon = false;
+                    if(tn != 0){
+                        std::cout << "Thread " << ti << " computed " << tn << " tasks "
+                            << " (min max avg = " << usecmin << " " << usecmax
+                            << " " << usectot/tn << ") "
+                            << "\n";
+                        totphotomarked += tn;
+                    }
                 }
-                else{
-                    dirOutputName_actual = dirOutputName;
-                    file_outimg = cimg_option("-outimg",(dirOutputName_actual.append(*imgFileName)).c_str(),"Output Image");
-                }
 
-                //Preparing outimg
-                imgout = cil::CImg<unsigned char>(imginp);
-
-                // mark phase
-                //If there is a problem in marking img
-                if(computeWatermarkedImg(markimg, imginp, imgout) == -1){
-                    std::cerr << "Problem in marking an img\n";
-                    continue;
-                }
-
-                // write phase
-                if(file_outimg) imgout.save(file_outimg);
-
-                auto elapsedTask = std::chrono::high_resolution_clock::now() - startTask;
-                auto usec    = std::chrono::duration_cast<std::chrono::microseconds>(elapsedTask).count();
-                if(usec < usecmin)
-                usecmin = usec;
-                if(usec > usecmax)
-                usecmax = usec;
-                usectot += usec;
-                
-                //Increment counter of imgs marked
-                tn++;
-
-            } 
-            else {
-
-                // otherwise terminate
-                keepon = false;
-                if(tn != 0){
-                    std::cout << "Thread " << ti << " computed " << tn << " tasks "
-                        << " (min max avg = " << usecmin << " " << usecmax
-                        << " " << usectot/tn << ") "
-                        << "\n";
-                    totphotomarked += tn;
-                }
+            }
+            catch(CImgException& e){
+                std::cerr << "Error in working on a img...\n";
             }
         }
     };

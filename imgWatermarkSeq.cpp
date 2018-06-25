@@ -66,10 +66,10 @@ int main(int argc, char *argv[]) {
     //Read markimgfile and initialize input img
     std::cout << "Reading markimg file...\n";
     const char *file_markimg = cimg_option("-markimg", (markImgFilename).c_str(), "Watermark Image");
-    cil::CImg<unsigned char> markimg(file_markimg);
+    CImg<unsigned char> markimg(file_markimg);
     std::cout << "Reading markimg ok, now starting reading images...\n";
     const char *file_inpimg, *file_outimg;
-    cil::CImg<unsigned char> imginp, imgout;
+    CImg<unsigned char> imginp, imgout;
 
     //Useful for reading imgs
     std::string imginpname(argv[2]), imginpname_actual, dirOutputName_actual, fileoutputname;
@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
 
             
             //Init input image and output image
-            imginp = cil::CImg<unsigned char>(file_inpimg);
+            imginp = CImg<unsigned char>(file_inpimg);
             auto elapsedloading = std::chrono::high_resolution_clock::now() - startloading;
             auto msecloading = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedloading).count();
             totreadwrite += msecloading;
@@ -109,7 +109,7 @@ int main(int argc, char *argv[]) {
                 file_outimg = cimg_option("-outimg",(dirOutputName_actual.append(p.path().filename().string())).c_str(),"Output Image");
             }
 
-            imgout = cil::CImg<unsigned char>(imginp); //initialize with input pixels
+            imgout = CImg<unsigned char>(imginp); //initialize with input pixels
 
             //If there is a problem in marking img
             if(computeWatermarkedImg(markimg, imginp, imgout) == -1){

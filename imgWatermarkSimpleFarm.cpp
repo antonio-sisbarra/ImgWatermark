@@ -10,7 +10,6 @@
 #include "CImg.h"
 #include <unistd.h>
 #include <atomic>
-#include <optional>
 #include <thread>
 
 //For marking imgs"

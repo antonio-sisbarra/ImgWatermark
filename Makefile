@@ -15,7 +15,9 @@ OPTFLAGS	= -O3 -finline-functions -DNDEBUG
 
 TARGETS		= imgWatermarkSeq      \
 		  imgWatermarkSimpleFarm	\
-		  imgWatermarkFarmPipe
+		  imgWatermarkFarmPipe		\
+		  imgWatermarkFFSimpleFarm	\
+		  imgWatermarkFFFarmPipe
 
 .PHONY: all clean cleanall
 .SUFFIXES: .cpp 
@@ -26,6 +28,10 @@ imgWatermarkSeq: imgWatermarkSeq.cpp watermarkUtil.cpp utils.cpp
 imgWatermarkSimpleFarm: imgWatermarkSimpleFarm.cpp watermarkUtil.cpp utils.cpp myqueue.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $(OPTFLAGS) -o $@ $< $(LDFLAGS)
 imgWatermarkFarmPipe: imgWatermarkFarmPipe.cpp watermarkUtil.cpp utils.cpp myqueue.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) $(OPTFLAGS) -o $@ $< $(LDFLAGS)
+imgWatermarkFFSimpleFarm: imgWatermarkFFSimpleFarm.cpp watermarkUtil.cpp utils.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) $(OPTFLAGS) -o $@ $< $(LDFLAGS)
+imgWatermarkFFFarmPipe: imgWatermarkFFFarmPipe.cpp watermarkUtil.cpp utils.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $(OPTFLAGS) -o $@ $< $(LDFLAGS)
 clean		: 
 	rm -f $(TARGETS)

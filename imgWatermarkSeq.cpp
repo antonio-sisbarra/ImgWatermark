@@ -7,7 +7,7 @@
 #include <chrono>
 #include <string>
 #include <experimental/filesystem>
-#include "CImg-2.2.4_pre060418/CImg.h"
+#include "CImg.h"
 #include <unistd.h>
 
 //For marking imgs"

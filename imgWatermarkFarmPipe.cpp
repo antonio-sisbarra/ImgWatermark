@@ -15,7 +15,7 @@
 //For marking imgs"
 #include "watermarkUtil.cpp"
 
-//For uutil functions
+//For util functions
 #include "utils.cpp"
 
 //For moving objects to farm workers
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
     //Read markimgfile and initialize input img
     std::cout << "Reading markimg file...\n";
     const char *file_markimg = cimg_option("-markimg", (markImgFilename).c_str(), "Watermark Image");
-    cil::CImg<unsigned char> markimg(file_markimg);
+    CImg<unsigned char> markimg(file_markimg);
     std::cout << "Reading markimg ok, now starting reading images...\n";
 
     //Useful for reading imgs
@@ -108,7 +108,7 @@ int main(int argc, char *argv[]) {
         bool keepon = true;
 
         /* WRITING THREAD BODY FUNCTION */
-        auto writebody = [&](int ti, myqueue<std::pair<std::string*,cil::CImg<unsigned char>*>*> *inpQueue){
+        auto writebody = [&](int ti, myqueue<std::pair<std::string*,CImg<unsigned char>*>*> *inpQueue){
             int tn = 0;
             int usecmin = INT_MAX;
             int usecmax = 0;
@@ -118,9 +118,9 @@ int main(int argc, char *argv[]) {
             while(keepon){
                 try{
                     //Read input of queue
-                    std::pair<std::string*,cil::CImg<unsigned char>*>* imgToWrite = inpQueue->pop();
+                    std::pair<std::string*,CImg<unsigned char>*>* imgToWrite = inpQueue->pop();
                     std::string* file_outimg = imgToWrite->first;
-                    cil::CImg<unsigned char>* imgout = imgToWrite->second;
+                    CImg<unsigned char>* imgout = imgToWrite->second;
 
                     // if we got something
                     if(*file_outimg != EOS) {
@@ -180,13 +180,13 @@ int main(int argc, char *argv[]) {
 
         std::string imginpname_actual, dirOutputName_actual, fileoutputname;
         const char *file_inpimg, *file_outimg;
-        cil::CImg<unsigned char> imginp, *imgout;
+        CImg<unsigned char> imginp, *imgout;
 
-        std::thread writingThread; myqueue<std::pair<std::string*,cil::CImg<unsigned char>*>*>* inpQueueWriteThread;
+        std::thread writingThread; myqueue<std::pair<std::string*,CImg<unsigned char>*>*>* inpQueueWriteThread;
 
         //If is a pipe create the inputQueue for the writing thread and start the thread
         if(isPipe){
-            inpQueueWriteThread = new myqueue<std::pair<std::string*,cil::CImg<unsigned char>*>*>();
+            inpQueueWriteThread = new myqueue<std::pair<std::string*,CImg<unsigned char>*>*>();
             writingThread = std::thread(writebody, ti+parDegree-1, inpQueueWriteThread);
         }
 
@@ -205,7 +205,7 @@ int main(int argc, char *argv[]) {
                     // read phase
                     imginpname_actual = imginpname;
                     file_inpimg = cimg_option("-impimg",(imginpname_actual.append(*imgFileName)).c_str(),"Input Image");
-                    imginp = cil::CImg<unsigned char>(file_inpimg);
+                    imginp = CImg<unsigned char>(file_inpimg);
 
                     //Verify if we have to save imgs in a folder or not
                     if(dirOutputName.length() < 4){
@@ -221,7 +221,7 @@ int main(int argc, char *argv[]) {
                     }
 
                     //Preparing outimg
-                    imgout = new cil::CImg<unsigned char>(imginp);
+                    imgout = new CImg<unsigned char>(imginp);
 
                     // mark phase
                     //If there is a problem in marking img
@@ -232,8 +232,8 @@ int main(int argc, char *argv[]) {
 
                     //If we are in pipeline we must send img to writingthread
                     if(isPipe){
-                        std::pair<std::string*,cil::CImg<unsigned char>*>* inpPair;
-                        inpPair = new std::pair<std::string*,cil::CImg<unsigned char>*>(new std::string(file_outimg), imgout);
+                        std::pair<std::string*,CImg<unsigned char>*>* inpPair;
+                        inpPair = new std::pair<std::string*,CImg<unsigned char>*>(new std::string(file_outimg), imgout);
                         inpQueueWriteThread->push(inpPair);
                     }
                     else
@@ -269,8 +269,8 @@ int main(int argc, char *argv[]) {
                     }
                     else{
                         //I'm in pipe, i must send eos to writingthread
-                        std::pair<std::string*,cil::CImg<unsigned char>*>* inpPair;
-                        inpPair = new std::pair<std::string*,cil::CImg<unsigned char>*>(new std::string(EOS), (cil::CImg<unsigned char>*)EOS);
+                        std::pair<std::string*,CImg<unsigned char>*>* inpPair;
+                        inpPair = new std::pair<std::string*,CImg<unsigned char>*>(new std::string(EOS), (CImg<unsigned char>*)EOS);
                         inpQueueWriteThread->push(inpPair);
                         std::cout << "Thread " << ti << " has read and marked " << tn << " imgs "
                                 << " (min max avg = " << usecmin << " " << usecmax

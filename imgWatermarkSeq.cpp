@@ -13,7 +13,7 @@
 //For marking imgs"
 #include "watermarkUtil.cpp"
 
-//For uutil functions
+//For util functions
 #include "utils.cpp"
 
 using namespace cimg_library;

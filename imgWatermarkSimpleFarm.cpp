@@ -15,7 +15,7 @@
 //For marking imgs"
 #include "watermarkUtil.cpp"
 
-//For uutil functions
+//For util functions
 #include "utils.cpp"
 
 //For moving objects to farm workers
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
     //Read markimgfile and initialize input img
     std::cout << "Reading markimg file...\n";
     const char *file_markimg = cimg_option("-markimg", (markImgFilename).c_str(), "Watermark Image");
-    cil::CImg<unsigned char> markimg(file_markimg);
+    CImg<unsigned char> markimg(file_markimg);
     std::cout << "Reading markimg ok, now starting reading images...\n";
 
     //Useful for reading imgs
@@ -102,7 +102,7 @@ int main(int argc, char *argv[]) {
 
         std::string imginpname_actual, dirOutputName_actual, fileoutputname;
         const char *file_inpimg, *file_outimg;
-        cil::CImg<unsigned char> imginp, imgout;
+        CImg<unsigned char> imginp, imgout;
 
         while(keepon) {
             try{
@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
                     // read phase
                     imginpname_actual = imginpname;
                     file_inpimg = cimg_option("-impimg",(imginpname_actual.append(*imgFileName)).c_str(),"Input Image");
-                    imginp = cil::CImg<unsigned char>(file_inpimg);
+                    imginp = CImg<unsigned char>(file_inpimg);
 
                     //Verify if we have to save imgs in a folder or not
                     if(dirOutputName.length() < 4){
@@ -134,7 +134,7 @@ int main(int argc, char *argv[]) {
                     }
 
                     //Preparing outimg
-                    imgout = cil::CImg<unsigned char>(imginp);
+                    imgout = CImg<unsigned char>(imginp);
 
                     // mark phase
                     //If there is a problem in marking img

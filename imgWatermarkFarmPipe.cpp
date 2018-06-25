@@ -158,6 +158,14 @@ int main(int argc, char *argv[]) {
                         }
                     }
 
+                    //Free memory
+                    if(file_outimg != nullptr)
+                        delete file_outimg;
+                    if(imgout != nullptr)
+                        delete imgout;
+                    if(imgToWrite != nullptr)
+                        delete imgToWrite;
+
                 }
                 catch(CImgException& e){
                     std::cerr << "Error in working on a img...\n";
@@ -224,7 +232,11 @@ int main(int argc, char *argv[]) {
                         inpQueueWriteThread->push(inpPair);
                     }
                     else
-                        if(file_outimg) imgout->save(file_outimg);
+                        if(file_outimg){
+                            imgout->save(file_outimg);
+                            //free memory
+                            delete imgout;
+                        }
 
                     auto elapsedTask = std::chrono::high_resolution_clock::now() - startTask;
                     auto usec    = std::chrono::duration_cast<std::chrono::microseconds>(elapsedTask).count();
@@ -266,11 +278,19 @@ int main(int argc, char *argv[]) {
                     keepon = false;
                 }
 
+                //Free memory
+                if(imgFileName != nullptr)
+                    delete imgFileName;
+
             }
             catch(CImgException& e){
                 std::cerr << "Error in working on a img...\n";
             }
         }
+
+        //Free memory before exiting the thread
+        if(inpQueueWriteThread != nullptr)
+            delete inpQueueWriteThread;
     };
 
 
@@ -319,6 +339,11 @@ int main(int argc, char *argv[]) {
 
     std::cout << "Computed " << totphotomarked << " imgs marking using " <<
         parDegree << " threads in " << msec << " msecs" << "\n"; 
+
+    //free memory
+    for(int i=0; i<nWorkersFarm; i++){
+        delete vecQueues.at(i);
+    }
 
     return 0;
 }

@@ -172,6 +172,9 @@ int main(int argc, char *argv[]) {
                     }
                 }
 
+                //Free memory
+                delete imgFileName;
+
             }
             catch(CImgException& e){
                 std::cerr << "Error in working on a img...\n";
@@ -217,6 +220,11 @@ int main(int argc, char *argv[]) {
 
     std::cout << "Computed " << totphotomarked << " imgs marking using " <<
         nw << " threads in " << msec << " msecs" << "\n"; 
+
+    // free memory
+    for(int i=0; i<nw; i++){
+        delete vecQueues.at(i);
+    }
 
     return 0;
 }

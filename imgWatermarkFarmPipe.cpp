@@ -144,6 +144,14 @@ int main(int argc, char *argv[]) {
                         //Increment counter of imgs marked
                         tn++;
 
+                        //Free memory
+                        if(file_outimg != nullptr)
+                            delete file_outimg;
+                        if(imgout != nullptr)
+                            delete imgout;
+                        if(imgToWrite != nullptr)
+                            delete imgToWrite;
+
                     } 
                     else {
 
@@ -156,15 +164,13 @@ int main(int argc, char *argv[]) {
                                 << "\n";
                             totphotomarked += tn;
                         }
-                    }
 
-                    //Free memory
-                    if(file_outimg != nullptr)
-                        delete file_outimg;
-                    if(imgout != nullptr)
-                        delete imgout;
-                    if(imgToWrite != nullptr)
-                        delete imgToWrite;
+                        //Free memory
+                        if(file_outimg != nullptr)
+                            delete file_outimg;
+                        if(imgToWrite != nullptr)
+                            delete imgToWrite;
+                    }
 
                 }
                 catch(CImgException& e){

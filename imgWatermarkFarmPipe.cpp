@@ -295,7 +295,7 @@ int main(int argc, char *argv[]) {
         }
 
         //Free memory before exiting the thread and if I'm in pipe
-        if(isPipe && inpQueueWriteThread != nullptr)
+        if(isPipe)
             delete inpQueueWriteThread;
     };
 

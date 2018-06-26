@@ -33,6 +33,8 @@
 imgWatermarkSeq
 imgWatermarkSimpleFarm
 imgWatermarkFarmPipe
+imgWatermarkFFSimpleFarm
+imgWatermarkFFFarmPipe
 
 # Images
 /img_out*

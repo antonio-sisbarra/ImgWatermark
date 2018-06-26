@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
     int nw;
 
     if (argc<4 || argc>5) {
-        std::cerr << "use: " << argv[0]  << " pardegree markimgfile dirinput [diroutput] \n dirinput and diroutput without / \n";
+        std::cerr << "use: " << argv[0]  << " pardegree markimgfile dirinput [diroutput] \n\n";
         return -1;
     }
 

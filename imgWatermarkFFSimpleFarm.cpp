@@ -20,7 +20,6 @@
 #include "utils.cpp"
 
 using namespace ff;
-using namespace cimg_library;
 
 //To count the photos marked
 std::atomic<int> totphotomarked(0);
@@ -44,7 +43,7 @@ struct workingStage: ff_node_t<std::string, void> {
     //Useful to manage imgs
     std::string imginpname_actual, dirOutputName_actual, fileoutputname;
     const char *file_inpimg, *file_outimg;
-    CImg<unsigned char> imginp, imgout;
+    cil::CImg<unsigned char> imginp, imgout;
 
     //Refs to general variable
     std::string* mImgInpName;
@@ -62,14 +61,12 @@ struct workingStage: ff_node_t<std::string, void> {
     void* svc(std::string *imgFileName) {
 
         try{
-            // compute task time
-            auto startTask   = std::chrono::high_resolution_clock::now();
             
             /* TASK JOB */
             // read phase
             imginpname_actual = *mImgInpName;
             file_inpimg = (imginpname_actual.append(*imgFileName)).c_str();
-            imginp = CImg<unsigned char>(file_inpimg);
+            imginp = cil::CImg<unsigned char>(file_inpimg);
 
             //Verify if we have to save imgs in a folder or not
             if(mDirOutputName->length() < 4){
@@ -85,7 +82,7 @@ struct workingStage: ff_node_t<std::string, void> {
             }
 
             //Preparing outimg
-            imgout = CImg<unsigned char>(imginp);
+            imgout = cil::CImg<unsigned char>(imginp);
 
             // mark phase
             //If there is a problem in marking img
@@ -103,7 +100,7 @@ struct workingStage: ff_node_t<std::string, void> {
             delete imgFileName;
 
         }
-        catch(CImgException& e){
+        catch(cil::CImgException& e){
             std::cerr << "Error in working on a img...\n";
         }
 
@@ -112,23 +109,23 @@ struct workingStage: ff_node_t<std::string, void> {
         
     }
 
-    /*
+    
     //Work ended for this worker
     void svc_end() {
         
-         std::cout << "sum = " << sum << "\n";
+         std::cout << "Thread ended...\n";
         
     }
-    */
 
 };
 
-int main(int argc, char* argv[]){
+
+int main(int argc, char *argv[]) {
     std::string markImgFilename, dirInput, dirOutput, *dirOutputName;
     int nw;
 
     if (argc<4 || argc>5) {
-        std::cerr << "use: " << argv[0]  << " pardegree markimgfile dirinput [diroutput] \n dirinput and diroutput without / \n";
+        std::cerr << "use: " << argv[0]  << " pardegree markimgfile dirinput [diroutput] \n\n";
         return -1;
     }
 
@@ -169,8 +166,8 @@ int main(int argc, char* argv[]){
 
     //Read markimgfile and initialize input img
     std::cout << "Reading markimg file...\n";
-    const char *file_markimg = cimg_option("-markimg", (markImgFilename).c_str(), "Watermark Image");
-    CImg<unsigned char> *markimg = new CImg<unsigned char>(file_markimg);
+    const char *file_markimg = markImgFilename.c_str();
+    cil::CImg<unsigned char> *markimg = new cil::CImg<unsigned char>(file_markimg);
     std::cout << "Reading markimg ok, now starting reading images...\n";
 
     //Useful for reading imgs
@@ -181,10 +178,9 @@ int main(int argc, char* argv[]){
         imginpname->append("/");
 
     //Create stages and workers for farm
-    pathnameGenStage  first();
-    workingStage  second(imginpname, dirOutputName, markimg);
+    pathnameGenStage  first;
     std::vector<std::unique_ptr<ff_node> > W;
-    for(size_t i=0;i<nw;++i) W.push_back(make_unique<workingStage>(second));
+    for(int i=0;i<nw;++i) W.push_back(make_unique<workingStage>(imginpname, dirOutputName, markimg));
 
     //Create farm and pipe
     ff_Farm<std::string> farm(std::move(W)); 
@@ -193,6 +189,8 @@ int main(int argc, char* argv[]){
     ff_Pipe<> pipe(first, farm);
 
     ffTime(START_TIME);
+
+    std::cout << "Working on imgs...\n";
 
     if (pipe.run_and_wait_end()<0) {
         error("running pipe");

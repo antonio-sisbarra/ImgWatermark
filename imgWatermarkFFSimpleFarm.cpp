@@ -183,21 +183,21 @@ int main(int argc, char *argv[]) {
     for(int i=0;i<nw;++i) W.push_back(make_unique<workingStage>(imginpname, dirOutputName, markimg));
 
     //Create farm and pipe
-    ff_Farm<std::string> farm(std::move(W)); 
+    ff_Farm<std::string> farm(std::move(W), first); 
     farm.set_scheduling_ondemand();  // set auto-scheduling to the farm
-
-    ff_Pipe<> pipe(first, farm);
+    farm.remove_collector(); // remove unused collector for the workers
 
     ffTime(START_TIME);
 
     std::cout << "Working on imgs...\n";
 
-    if (pipe.run_and_wait_end()<0) {
+    if (farm.run_and_wait_end()<0) {
         error("running pipe");
         return -1;
     }
 
     ffTime(STOP_TIME);
+    std::cout << "Marked correctly " << totphotomarked << " imgs...\n";
     std::cout << "Time: " << ffTime(GET_TIME) << "msec\n";
 
     //Free memory

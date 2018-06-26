@@ -190,7 +190,7 @@ int main(int argc, char *argv[]) {
     std::cout << "Working on imgs...\n";
 
     if (farm.run_and_wait_end()<0) {
-        error("running pipe");
+        error("running farm");
         return -1;
     }
 

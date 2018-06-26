@@ -11,7 +11,7 @@ INCLUDES	= -I $(FF_ROOT)
 CXXFLAGS  	= 
 
 LDFLAGS 	= -L/usr/X11R6/lib -lm -lpthread -lX11 -lstdc++fs
-OPTFLAGS	= -O3 -finline-functions -DNDEBUG
+OPTFLAGS	= -O3 -finline-functions -faligned-new -DNDEBUG
 
 TARGETS		= imgWatermarkSeq      \
 		  imgWatermarkSimpleFarm	\

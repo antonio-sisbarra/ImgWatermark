@@ -161,9 +161,6 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
-    //To count the photos marked
-    std::atomic<int> totphotomarked(0);
-
     //Read markimgfile and initialize input img
     std::cout << "Reading markimg file...\n";
     const char *file_markimg = markImgFilename.c_str();

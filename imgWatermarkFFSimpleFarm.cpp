@@ -1,5 +1,6 @@
 #include <iostream>
 #include <ff/farm.hpp>
+#include <ff/pipeline.hpp>
 #include <vector>
 #include <cmath>
 #include <cstdlib>
@@ -58,7 +59,7 @@ struct workingStage: ff_node_t<std::string, void> {
     }
 
     //The work: read img, mark and write 
-    void* svc(std::string *imgFilename) {
+    void* svc(std::string *imgFileName) {
 
         try{
             // compute task time
@@ -67,7 +68,7 @@ struct workingStage: ff_node_t<std::string, void> {
             /* TASK JOB */
             // read phase
             imginpname_actual = *mImgInpName;
-            file_inpimg = cimg_option("-impimg",(imginpname_actual.append(*imgFileName)).c_str(),"Input Image");
+            file_inpimg = (imginpname_actual.append(*imgFileName)).c_str();
             imginp = CImg<unsigned char>(file_inpimg);
 
             //Verify if we have to save imgs in a folder or not
@@ -76,11 +77,11 @@ struct workingStage: ff_node_t<std::string, void> {
                 std::string imginpstring = *imgFileName;
                 imginpstring.erase(imginpstring.find("."),4);
                 fileoutputname = imginpstring.append("_marked.jpg");
-                file_outimg = cimg_option("-outimg",fileoutputname.c_str(),"Output Image");
+                file_outimg = fileoutputname.c_str();
             }
             else{
-                dirOutputName_actual = dirOutputName;
-                file_outimg = cimg_option("-outimg",(dirOutputName_actual.append(*imgFileName)).c_str(),"Output Image");
+                dirOutputName_actual = *mDirOutputName;
+                file_outimg = (dirOutputName_actual.append(*imgFileName)).c_str();
             }
 
             //Preparing outimg
@@ -88,34 +89,15 @@ struct workingStage: ff_node_t<std::string, void> {
 
             // mark phase
             //If there is a problem in marking img
-            if(computeWatermarkedImg(markimg, imginp, imgout) == -1){
+            if(computeWatermarkedImg(*mMarkImg, imginp, imgout) == -1){
                 std::cerr << "Problem in marking an img\n";
-                continue;
             }
 
             // write phase
             if(file_outimg) imgout.save(file_outimg);
-
-            auto elapsedTask = std::chrono::high_resolution_clock::now() - startTask;
-            auto usec    = std::chrono::duration_cast<std::chrono::microseconds>(elapsedTask).count();
-            if(usec < usecmin)
-            usecmin = usec;
-            if(usec > usecmax)
-            usecmax = usec;
-            usectot += usec;
             
             //Increment counter of imgs marked
-            tn++;
-
-            // otherwise terminate
-            keepon = false;
-            if(tn != 0){
-                std::cout << "Thread " << ti << " computed " << tn << " tasks "
-                    << " (min max avg = " << usecmin << " " << usecmax
-                    << " " << usectot/tn << ") "
-                    << "\n";
-                totphotomarked += tn;
-            }
+            totphotomarked++;
 
             //Free memory
             delete imgFileName;
@@ -125,25 +107,24 @@ struct workingStage: ff_node_t<std::string, void> {
             std::cerr << "Error in working on a img...\n";
         }
 
-        /*
-        //std::cout<< "thirdStage received " << t << "\n";
-        sum += t; 
-        delete task;
-        */
+        //Worker goes on, when it receives EOS, svc_end is called
         return GO_ON; 
         
     }
 
+    /*
     //Work ended for this worker
     void svc_end() {
-        /*
+        
          std::cout << "sum = " << sum << "\n";
-        */
+        
     }
+    */
+
 };
 
 int main(int argc, char* argv[]){
-    std::string markImgFilename, dirInput, dirOutput, dirOutputName;
+    std::string markImgFilename, dirInput, dirOutput, *dirOutputName;
     int nw;
 
     if (argc<4 || argc>5) {
@@ -163,13 +144,13 @@ int main(int argc, char* argv[]){
 
         //Check if arg ends with /
         if(dirOutput.back() != '/')
-            dirOutputName = std::string(argv[4]).append("/");
+            dirOutputName = new std::string(std::string(argv[4]).append("/"));
         else 
-            dirOutputName = std::string(argv[4]);
+            dirOutputName = new std::string(argv[4]);
     }
     else{
         dirOutput = GetCurrentWorkingDir();
-        dirOutputName = std::string(" ");
+        dirOutputName = new std::string(" ");
     }
     
     markImgFilename = argv[2];
@@ -189,18 +170,43 @@ int main(int argc, char* argv[]){
     //Read markimgfile and initialize input img
     std::cout << "Reading markimg file...\n";
     const char *file_markimg = cimg_option("-markimg", (markImgFilename).c_str(), "Watermark Image");
-    CImg<unsigned char> markimg(file_markimg);
+    CImg<unsigned char> *markimg = new CImg<unsigned char>(file_markimg);
     std::cout << "Reading markimg ok, now starting reading images...\n";
 
     //Useful for reading imgs
-    std::string imginpname(argv[3]);
+    std::string* imginpname = new std::string(argv[3]);
 
     //Check if arg ends with /
-    if(imginpname.back() != '/')
-        imginpname.append("/");
+    if(imginpname->back() != '/')
+        imginpname->append("/");
 
+    //Create stages and workers for farm
+    pathnameGenStage  first();
+    workingStage  second(imginpname, dirOutputName, markimg);
+    std::vector<std::unique_ptr<ff_node> > W;
+    for(size_t i=0;i<nw;++i) W.push_back(make_unique<workingStage>(second));
 
+    //Create farm and pipe
+    ff_Farm<std::string> farm(std::move(W)); 
+    farm.set_scheduling_ondemand();  // set auto-scheduling to the farm
 
+    ff_Pipe<> pipe(first, farm);
 
     ffTime(START_TIME);
+
+    if (pipe.run_and_wait_end()<0) {
+        error("running pipe");
+        return -1;
+    }
+
+    ffTime(STOP_TIME);
+    std::cout << "Time: " << ffTime(GET_TIME) << "\n";
+    pipe.ffStats(std::cout);
+
+    //Free memory
+    if(markimg != nullptr) delete markimg;
+    if(dirOutputName != nullptr) delete dirOutputName;
+    if(markimg != nullptr) delete markimg;
+
+    return 0;
 }

@@ -101,6 +101,7 @@ struct workingStage: ff_node_t<std::string, void> {
 
         }
         catch(cil::CImgException& e){
+            std::cerr << e.what() << "\n";
             std::cerr << "Error in working on a img...\n";
         }
 

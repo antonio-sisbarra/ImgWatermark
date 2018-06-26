@@ -173,6 +173,7 @@ int main(int argc, char *argv[]) {
 
                 }
                 catch(CImgException& e){
+                    std::cerr << e.what() << "\n";
                     std::cerr << "Error in working on a img...\n";
                 }
             }

@@ -1,4 +1,4 @@
-#include "CImg-2.2.4_pre060418/CImg.h"
+#include "CImg.h"
 
 using namespace cimg_library;
 

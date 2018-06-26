@@ -121,7 +121,7 @@ struct workingStage: ff_node_t<std::string, void> {
 
 
 int main(int argc, char *argv[]) {
-    std::string markImgFilename, dirInput, dirOutput, *dirOutputName;
+    std::string markImgFilename, dirOutput, *dirOutputName;
     int nw;
 
     if (argc<4 || argc>5) {
@@ -198,11 +198,10 @@ int main(int argc, char *argv[]) {
     }
 
     ffTime(STOP_TIME);
-    std::cout << "Time: " << ffTime(GET_TIME) << "\n";
-    pipe.ffStats(std::cout);
+    std::cout << "Time: " << ffTime(GET_TIME) << "msec\n";
 
     //Free memory
-    if(markimg != nullptr) delete markimg;
+    if(imginpname != nullptr) delete imginpname;
     if(dirOutputName != nullptr) delete dirOutputName;
     if(markimg != nullptr) delete markimg;
 

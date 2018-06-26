@@ -294,8 +294,8 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        //Free memory before exiting the thread
-        if(inpQueueWriteThread != nullptr)
+        //Free memory before exiting the thread and if I'm in pipe
+        if(isPipe && inpQueueWriteThread != nullptr)
             delete inpQueueWriteThread;
     };
 
@@ -348,7 +348,8 @@ int main(int argc, char *argv[]) {
 
     //free memory
     for(int i=0; i<nWorkersFarm; i++){
-        delete vecQueues.at(i);
+        if(vecQueues.at(i) != nullptr)
+            delete vecQueues.at(i);
     }
 
     return 0;

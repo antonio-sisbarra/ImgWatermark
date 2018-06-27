@@ -121,9 +121,6 @@ int main(int argc, char *argv[]) {
 
                     // if we got something
                     if(*file_outimg != EOS) {
-
-                        // compute task time
-                        auto startTask   = std::chrono::high_resolution_clock::now();
                         
                         /* TASK JOB */
                         // write phase

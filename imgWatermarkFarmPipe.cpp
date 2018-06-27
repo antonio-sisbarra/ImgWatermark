@@ -105,17 +105,11 @@ int main(int argc, char *argv[]) {
     /* THREAD BODY FUNCTION -> READ MARK (WRITE ON A NEW THREAD) -> PIPELINE */
     auto body = [&](int ti, myqueue<std::string*> *inpQueue, bool isPipe) {
         int tn = 0;
-        int usecmin = INT_MAX;
-        int usecmax = 0;
-        long usectot = 0; 
         bool keepon = true;
 
         /* WRITING THREAD BODY FUNCTION */
         auto writebody = [&](int ti, myqueue<std::pair<std::string*,CImg<unsigned char>*>*> *inpQueue){
             int tn = 0;
-            int usecmin = INT_MAX;
-            int usecmax = 0;
-            long usectot = 0; 
             bool keepon = true;
 
             while(keepon){
@@ -134,14 +128,6 @@ int main(int argc, char *argv[]) {
                         /* TASK JOB */
                         // write phase
                         if(file_outimg) (*imgout).save_jpeg((*file_outimg).c_str());
-
-                        auto elapsedTask = std::chrono::high_resolution_clock::now() - startTask;
-                        auto usec    = std::chrono::duration_cast<std::chrono::microseconds>(elapsedTask).count();
-                        if(usec < usecmin)
-                        usecmin = usec;
-                        if(usec > usecmax)
-                        usecmax = usec;
-                        usectot += usec;
                         
                         //Increment counter of imgs marked
                         tn++;
@@ -160,10 +146,6 @@ int main(int argc, char *argv[]) {
                         // otherwise terminate
                         keepon = false;
                         if(tn != 0){
-                            std::cout << "Thread " << ti << " has written " << tn << " imgs "
-                                << " (min max avg = " << usecmin << " " << usecmax
-                                << " " << usectot/tn << ") "
-                                << "\n";
                             totphotomarked += tn;
                         }
 
@@ -201,9 +183,6 @@ int main(int argc, char *argv[]) {
                 std::string* imgFileName = inpQueue->pop();
                 // if we got something
                 if(*imgFileName != EOS) {
-
-                    // compute task time
-                    auto startTask   = std::chrono::high_resolution_clock::now();
                     
                     /* TASK JOB */
                     // read phase
@@ -246,14 +225,6 @@ int main(int argc, char *argv[]) {
                             //free memory
                             delete imgout;
                         }
-
-                    auto elapsedTask = std::chrono::high_resolution_clock::now() - startTask;
-                    auto usec    = std::chrono::duration_cast<std::chrono::microseconds>(elapsedTask).count();
-                    if(usec < usecmin)
-                    usecmin = usec;
-                    if(usec > usecmax)
-                    usecmax = usec;
-                    usectot += usec;
                     
                     //Increment counter of imgs read (or marked if i'm not in pipe)
                     tn++;
@@ -264,10 +235,6 @@ int main(int argc, char *argv[]) {
                     // otherwise terminate
                     if(isPipe == false){
                         if(tn != 0){
-                            std::cout << "Thread " << ti << " computed " << tn << " tasks "
-                                << " (min max avg = " << usecmin << " " << usecmax
-                                << " " << usectot/tn << ") "
-                                << "\n";
                             totphotomarked += tn;
                         }
                     }
@@ -276,10 +243,6 @@ int main(int argc, char *argv[]) {
                         std::pair<std::string*,CImg<unsigned char>*>* inpPair;
                         inpPair = new std::pair<std::string*,CImg<unsigned char>*>(new std::string(EOS), (CImg<unsigned char>*)EOS);
                         inpQueueWriteThread->push(inpPair);
-                        std::cout << "Thread " << ti << " has read and marked " << tn << " imgs "
-                                << " (min max avg = " << usecmin << " " << usecmax
-                                << " " << usectot/tn << ") "
-                                << "\n";
 
                         //Waiting the writingthread
                         writingThread.join();

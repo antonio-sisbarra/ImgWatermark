@@ -113,14 +113,6 @@ struct workingStage: ff_node_t<std::string, void> {
         
     }
 
-    
-    //Work ended for this worker
-    void svc_end() {
-        
-         std::cout << "Thread ended...\n";
-        
-    }
-
 };
 
 

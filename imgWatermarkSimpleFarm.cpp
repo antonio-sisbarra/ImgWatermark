@@ -98,9 +98,6 @@ int main(int argc, char *argv[]) {
     /* THREAD BODY FUNCTION -> READ MARK WRITE */
     auto body = [&](int ti, myqueue<std::string*> *inpQueue) {
         int tn = 0;
-        int usecmin = INT_MAX;
-        int usecmax = 0;
-        long usectot = 0; 
         bool keepon = true;
 
         std::string imginpname_actual, dirOutputName_actual, fileoutputname;
@@ -113,9 +110,6 @@ int main(int argc, char *argv[]) {
                 std::string* imgFileName = inpQueue->pop();
                 // if we got something
                 if(*imgFileName != EOS) {
-
-                    // compute task time
-                    auto startTask   = std::chrono::high_resolution_clock::now();
                     
                     /* TASK JOB */
                     // read phase
@@ -148,14 +142,6 @@ int main(int argc, char *argv[]) {
 
                     // write phase
                     if(file_outimg) imgout.save_jpeg(file_outimg);
-
-                    auto elapsedTask = std::chrono::high_resolution_clock::now() - startTask;
-                    auto usec    = std::chrono::duration_cast<std::chrono::microseconds>(elapsedTask).count();
-                    if(usec < usecmin)
-                    usecmin = usec;
-                    if(usec > usecmax)
-                    usecmax = usec;
-                    usectot += usec;
                     
                     //Increment counter of imgs marked
                     tn++;
@@ -166,10 +152,6 @@ int main(int argc, char *argv[]) {
                     // otherwise terminate
                     keepon = false;
                     if(tn != 0){
-                        std::cout << "Thread " << ti << " computed " << tn << " tasks "
-                            << " (min max avg = " << usecmin << " " << usecmax
-                            << " " << usectot/tn << ") "
-                            << "\n";
                         totphotomarked += tn;
                     }
                 }

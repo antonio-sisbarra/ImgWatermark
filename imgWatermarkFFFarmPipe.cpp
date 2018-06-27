@@ -100,20 +100,8 @@ struct readMarkStage: ff_node_t<std::string, mypair> {
                 //Preparing output
                 mypair* output = new mypair(new std::string(file_outimg), imgout);
 
-                /*
-                // write phase
-                if(file_outimg) imgout.save(file_outimg);
-                
-                //Increment counter of imgs marked
-                totphotomarked++;
-
-                //Free memory
-                delete imgFileName;
-                */
-
                 ff_send_out(output);
                 
-
             }
             catch(cil::CImgException& e){
                 std::cerr << e.what() << "\n";
@@ -168,12 +156,6 @@ struct writeStage: ff_node_t<mypair, void> {
         //Writer goes on, when it receives EOS, svc_end is called
         return GO_ON;
 
-    }
-
-    
-    //Work ended for this writer
-    void svc_end() {
-         std::cout << "Thread writer ended...\n";
     }
 };
 
@@ -246,14 +228,6 @@ struct workingStage: ff_node_t<std::string, void> {
 
         //Worker goes on, when it receives EOS, svc_end is called
         return GO_ON; 
-        
-    }
-
-    
-    //Work ended for this worker
-    void svc_end() {
-        
-         std::cout << "Thread ended...\n";
         
     }
 

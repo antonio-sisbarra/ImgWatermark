@@ -7,7 +7,10 @@
 #include <chrono>
 #include <string>
 #include <experimental/filesystem>
+
+#define cimg_use_jpeg  //to use native library to convert imgs
 #include "CImg.h"
+
 #include <unistd.h>
 #include <atomic>
 #include <thread>
@@ -144,7 +147,7 @@ int main(int argc, char *argv[]) {
                     }
 
                     // write phase
-                    if(file_outimg) imgout.save(file_outimg);
+                    if(file_outimg) imgout.save_jpeg(file_outimg);
 
                     auto elapsedTask = std::chrono::high_resolution_clock::now() - startTask;
                     auto usec    = std::chrono::duration_cast<std::chrono::microseconds>(elapsedTask).count();

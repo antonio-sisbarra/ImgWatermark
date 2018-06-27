@@ -10,7 +10,7 @@ CXX		= g++ -std=c++11 -g -Wall #-DNO_DEFAULT_MAPPING
 INCLUDES	= -I $(FF_ROOT)
 CXXFLAGS  	= 
 
-LDFLAGS 	= -L/usr/X11R6/lib -lm -lpthread -lX11 -lstdc++fs
+LDFLAGS 	= -L/usr/X11R6/lib -lm -lpthread -lX11 -lstdc++fs -L/usr/local/lib -ljpeg
 OPTFLAGS	= -O3 -finline-functions -faligned-new -DNDEBUG
 
 TARGETS		= imgWatermarkSeq      \

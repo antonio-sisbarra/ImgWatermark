@@ -7,7 +7,10 @@
 #include <chrono>
 #include <string>
 #include <experimental/filesystem>
+
+#define cimg_use_jpeg  //to use native library to convert imgs
 #include "CImg.h"
+
 #include <unistd.h>
 
 //For marking imgs"
@@ -119,7 +122,7 @@ int main(int argc, char *argv[]) {
 
             auto startsaving = std::chrono::high_resolution_clock::now();
             //Save outputimg
-            if(file_outimg) imgout.save(file_outimg);
+            if(file_outimg) imgout.save_jpeg(file_outimg);
             auto elapsedsaving = std::chrono::high_resolution_clock::now() - startsaving;
             auto msecsaving = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedsaving).count();
             totreadwrite += msecsaving;

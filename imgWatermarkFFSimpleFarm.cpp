@@ -9,7 +9,10 @@
 #include <chrono>
 #include <string>
 #include <experimental/filesystem>
+
+#define cimg_use_jpeg  //to use native library to convert imgs
 #include "CImg.h"
+
 #include <unistd.h>
 #include <atomic>
 
@@ -91,7 +94,7 @@ struct workingStage: ff_node_t<std::string, void> {
             }
 
             // write phase
-            if(file_outimg) imgout.save(file_outimg);
+            if(file_outimg) imgout.save_jpeg(file_outimg);
             
             //Increment counter of imgs marked
             totphotomarked++;

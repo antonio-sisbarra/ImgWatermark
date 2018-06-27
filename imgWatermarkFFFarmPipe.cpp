@@ -9,7 +9,10 @@
 #include <chrono>
 #include <string>
 #include <experimental/filesystem>
+
+#define cimg_use_jpeg  //to use native library to convert imgs
 #include "CImg.h"
+
 #include <unistd.h>
 #include <atomic>
 
@@ -146,7 +149,7 @@ struct writeStage: ff_node_t<mypair, void> {
             cil::CImg<unsigned char> *imgout = input->second;
 
             // write phase
-            if(file_outimg) imgout->save(file_outimg->c_str());
+            if(file_outimg) imgout->save_jpeg(file_outimg->c_str());
             
             //Increment counter of imgs marked
             totphotomarked++;
@@ -227,7 +230,7 @@ struct workingStage: ff_node_t<std::string, void> {
             }
 
             // write phase
-            if(file_outimg) imgout.save(file_outimg);
+            if(file_outimg) imgout.save_jpeg(file_outimg);
             
             //Increment counter of imgs marked
             totphotomarked++;
@@ -256,13 +259,6 @@ struct workingStage: ff_node_t<std::string, void> {
 
 };
 
-
-/* WORKING STAGE OF PIPELINE WORKERS IN THE FARM (CREATE PIPELINE WITH READMARKSTAGE AND WRITESTAGE) */
-/*
-struct workingPipeStage: ff_node_t<std::string, void> {
-
-};
-*/
 
 int main(int argc, char *argv[]) {
     std::string markImgFilename, dirOutput, *dirOutputName;

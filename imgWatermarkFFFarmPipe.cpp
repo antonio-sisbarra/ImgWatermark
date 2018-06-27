@@ -115,14 +115,6 @@ struct readMarkStage: ff_node_t<std::string, mypair> {
         }
     }
 
-    
-    //Work ended for this worker
-    void svc_end() {
-        
-         std::cout << "Thread reader and marker ended...\n";
-        
-    }
-
 };
 
 /* WRITE STAGE (ONLY FOR PIPE WORKERS OF THE FARM)*/

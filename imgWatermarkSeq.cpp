@@ -139,19 +139,23 @@ int main(int argc, char *argv[]) {
     auto totelapsed = std::chrono::high_resolution_clock::now() - start;
     auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(totelapsed).count();
 
-    std::cout << "msec elapsed: " << msec << "\n";
-    std::cout << "sec elapsed: " << (msec/1000) << "\n";
+    std::cout << "----------------------------\n";
 
-    std::cout << "msec elapsed reading and writing: " << totreadwrite << "\n";
-    std::cout << "sec elapsed reading and writing: " << (totreadwrite/1000) << "\n";
+    std::cout << "- msec elapsed: " << msec << "\n";
+    std::cout << "- sec elapsed: " << (msec/1000) << "\n";
 
-    std::cout << "msec elapsed reading: " << totread << "\n";
-    std::cout << "sec elapsed reading: " << (totread/1000) << "\n";
+    std::cout << "- msec elapsed reading and writing: " << totreadwrite << "\n";
+    std::cout << "- sec elapsed reading and writing: " << (totreadwrite/1000) << "\n";
 
-    std::cout << "msec elapsed writing: " << totwrite << "\n";
-    std::cout << "sec elapsed writing: " << (totwrite/1000) << "\n";
+    std::cout << "- msec elapsed reading: " << totread << "\n";
+    std::cout << "- sec elapsed reading: " << (totread/1000) << "\n";
 
-    std::cout << "total number of photos marked: " << totphotomarked << "\n";
+    std::cout << "- msec elapsed writing: " << totwrite << "\n";
+    std::cout << "- sec elapsed writing: " << (totwrite/1000) << "\n";
+
+    std::cout << "- total number of photos marked: " << totphotomarked << "\n";
+
+    std::cout << "----------------------------\n";
 
     return 0;
 }

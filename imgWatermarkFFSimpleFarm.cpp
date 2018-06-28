@@ -190,8 +190,12 @@ int main(int argc, char *argv[]) {
     }
 
     ffTime(STOP_TIME);
-    std::cout << "Marked correctly " << totphotomarked << " imgs...\n";
-    std::cout << "Time: " << ffTime(GET_TIME) << "msec\n";
+
+    std::cout << "----------------------------\n";
+    std::cout << "- Marked correctly " << totphotomarked << " imgs...\n";
+    std::cout << "- Time: " << ffTime(GET_TIME) << "msec\n";
+    std::cout << "- Parallelism degree: " << nw << "\n";
+    std::cout << "----------------------------\n";
 
     //Free memory
     if(imginpname != nullptr) delete imginpname;

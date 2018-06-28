@@ -306,8 +306,12 @@ int main(int argc, char *argv[]) {
     auto totelapsed = std::chrono::high_resolution_clock::now() - start;
     auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(totelapsed).count();
 
-    std::cout << "Computed " << totphotomarked << " imgs marking using " <<
+    std::cout << "----------------------------\n";
+
+    std::cout << "- Computed " << totphotomarked << " imgs marking using " <<
         parDegree << " threads in " << msec << " msecs" << "\n"; 
+
+    std::cout << "----------------------------\n";
 
     //free memory
     for(int i=0; i<nWorkersFarm; i++){

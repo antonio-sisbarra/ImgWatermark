@@ -6,7 +6,7 @@ ifndef FF_ROOT
 FF_ROOT		= /usr/local/include #/home/spm18-sisbarra/ImgWatermarkProject/ImgWatermark in shared machine
 endif
 
-CXX		= g++ -std=c++11 -g -Wall #-DNO_DEFAULT_MAPPING
+CXX		= LD_LIBRARY_PATH=/usr/local/lib64 g++ -std=c++11 -g -Wall #-DNO_DEFAULT_MAPPING
 INCLUDES	= -I $(FF_ROOT)
 CXXFLAGS  	= 
 

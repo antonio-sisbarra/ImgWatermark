@@ -26,6 +26,9 @@ using namespace cimg_library;
 int main(int argc, char *argv[]) {   
     std::string markImgFilename, dirInput, dirOutput, dirOutputName;
 
+    //Useful for computing tGen, tRead, tMark and tWrite in avg of a single image
+    int tGen = 0, tRead = 0, tMark = 0, tWrite = 0;
+
     if (argc<3 || argc>4) {
         std::cerr << "use: " << argv[0]  << " markimgfile dirinput [diroutput] \n";
         return -1;
@@ -98,6 +101,7 @@ int main(int argc, char *argv[]) {
             auto msecloading = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedloading).count();
             totreadwrite += msecloading;
             totread += msecloading;
+            tRead += msecloading;
 
             //Verify if we have to save imgs in a folder or not
             if(dirOutputName.length() < 4){
@@ -114,11 +118,15 @@ int main(int argc, char *argv[]) {
 
             imgout = CImg<unsigned char>(imginp); //initialize with input pixels
 
+            auto startmarking = std::chrono::high_resolution_clock::now();
             //If there is a problem in marking img
             if(computeWatermarkedImg(markimg, imginp, imgout) == -1){
                 std::cerr << "Problem in marking an img\n";
                 continue;
             }
+            auto elapsedmarking = std::chrono::high_resolution_clock::now() - startmarking;
+            auto msecmarking = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedmarking).count();
+            tMark += msecmarking;
 
             auto startsaving = std::chrono::high_resolution_clock::now();
             //Save outputimg
@@ -127,6 +135,7 @@ int main(int argc, char *argv[]) {
             auto msecsaving = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedsaving).count();
             totreadwrite += msecsaving;
             totwrite += msecsaving;
+            tWrite += msecsaving;
 
             totphotomarked++;
 
@@ -156,6 +165,12 @@ int main(int argc, char *argv[]) {
     std::cout << "- total number of photos marked: " << totphotomarked << "\n";
 
     std::cout << "----------------------------\n";
+
+    std::cout << "Avg tRead of one img: " << tRead/totphotomarked << "\n";
+    std::cout << "Avg tMark of one img: " << tMark/totphotomarked << "\n";
+    std::cout << "Avg tWrite of one img: " << tWrite/totphotomarked << "\n";
+
+    std::cout << "----------------------------\n";    
 
     return 0;
 }

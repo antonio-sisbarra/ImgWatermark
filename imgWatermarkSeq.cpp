@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
     std::string markImgFilename, dirInput, dirOutput, dirOutputName;
 
     //Useful for computing tGen, tRead, tMark and tWrite in avg of a single image
-    int tGen = 0, tRead = 0, tMark = 0, tWrite = 0;
+    float tGen = 0, tRead = 0, tMark = 0, tWrite = 0;
 
     if (argc<3 || argc>4) {
         std::cerr << "use: " << argv[0]  << " markimgfile dirinput [diroutput] \n";
@@ -174,10 +174,10 @@ int main(int argc, char *argv[]) {
 
     std::cout << "----------------------------\n";
 
-    std::cout << "Avg tGen of one pathNameImg: " << tGen/totphotomarked << "\n";
-    std::cout << "Avg tRead of one img: " << tRead/totphotomarked << "\n";
-    std::cout << "Avg tMark of one img: " << tMark/totphotomarked << "\n";
-    std::cout << "Avg tWrite of one img: " << tWrite/totphotomarked << "\n";
+    std::cout << "Avg tGen of one pathNameImg: " << tGen/totphotomarked << " msec\n";
+    std::cout << "Avg tRead of one img: " << tRead/totphotomarked << " msec\n";
+    std::cout << "Avg tMark of one img: " << tMark/totphotomarked << " msec\n";
+    std::cout << "Avg tWrite of one img: " << tWrite/totphotomarked << " msec\n";
 
     std::cout << "----------------------------\n";    
 

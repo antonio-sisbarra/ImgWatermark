@@ -174,10 +174,10 @@ int main(int argc, char *argv[]) {
 
     std::cout << "----------------------------\n";
 
-    std::cout << "Avg tGen of one pathNameImg: " << tGen/totphotomarked << " msec\n";
-    std::cout << "Avg tRead of one img: " << tRead/totphotomarked << " msec\n";
-    std::cout << "Avg tMark of one img: " << tMark/totphotomarked << " msec\n";
-    std::cout << "Avg tWrite of one img: " << tWrite/totphotomarked << " msec\n";
+    std::cout << "- Avg tGen of one pathNameImg: " << tGen/totphotomarked << " msec\n";
+    std::cout << "- Avg tRead of one img: " << tRead/totphotomarked << " msec\n";
+    std::cout << "- Avg tMark of one img: " << tMark/totphotomarked << " msec\n";
+    std::cout << "- Avg tWrite of one img: " << tWrite/totphotomarked << " msec\n";
 
     std::cout << "----------------------------\n";    
 

@@ -157,6 +157,8 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
+    ffTime(START_TIME);
+
     //Read markimgfile and initialize input img
     std::cout << "Reading markimg file...\n";
     const char *file_markimg = markImgFilename.c_str();
@@ -179,8 +181,6 @@ int main(int argc, char *argv[]) {
     ff_Farm<std::string> farm(std::move(W), first); 
     farm.set_scheduling_ondemand();  // set auto-scheduling to the farm
     farm.remove_collector(); // remove unused collector for the workers
-
-    ffTime(START_TIME);
 
     std::cout << "Working on imgs...\n";
 

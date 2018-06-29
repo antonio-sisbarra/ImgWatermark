@@ -74,6 +74,9 @@ int main(int argc, char *argv[]) {
     //To count the photos marked
     std::atomic<int> totphotomarked(0);
 
+    //For elapsed time of the program
+    auto start = std::chrono::high_resolution_clock::now();
+
     //Read markimgfile and initialize input img
     std::cout << "Reading markimg file...\n";
     const char *file_markimg = cimg_option("-markimg", (markImgFilename).c_str(), "Watermark Image");
@@ -86,14 +89,6 @@ int main(int argc, char *argv[]) {
     //Check if arg ends with /
     if(imginpname.back() != '/')
         imginpname.append("/");
-
-    //Create a queue of input for each worker of the farm
-    std::vector<myqueue<std::string*>*> vecQueues;
-    for(int i=0; i<nw; i++){
-        myqueue<std::string*>* q = new myqueue<std::string*>();
-        vecQueues.push_back(q);
-    }
-
 
     /* THREAD BODY FUNCTION -> READ MARK WRITE */
     auto body = [&](int ti, myqueue<std::string*> *inpQueue) {
@@ -167,9 +162,12 @@ int main(int argc, char *argv[]) {
         }
     };
 
-
-    //For elapsed time of the program
-    auto start = std::chrono::high_resolution_clock::now();
+    //Create a queue of input for each worker of the farm
+    std::vector<myqueue<std::string*>*> vecQueues;
+    for(int i=0; i<nw; i++){
+        myqueue<std::string*>* q = new myqueue<std::string*>();
+        vecQueues.push_back(q);
+    }
 
     std::string* photoFileName; 
     int circularInd = 0; //for round robin policy

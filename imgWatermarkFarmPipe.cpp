@@ -74,6 +74,9 @@ int main(int argc, char *argv[]) {
     //To count the photos marked
     std::atomic<int> totphotomarked(0);
 
+    //For elapsed time of the program
+    auto start = std::chrono::high_resolution_clock::now();
+
     //Read markimgfile and initialize input img
     std::cout << "Reading markimg file...\n";
     const char *file_markimg = cimg_option("-markimg", (markImgFilename).c_str(), "Watermark Image");
@@ -261,10 +264,6 @@ int main(int argc, char *argv[]) {
         if(isPipe)
             delete inpQueueWriteThread;
     };
-
-
-    //For elapsed time of the program
-    auto start = std::chrono::high_resolution_clock::now();
 
     std::string* photoFileName; 
     int circularInd = 0; //for round robin policy

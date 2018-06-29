@@ -90,8 +90,8 @@ int main(int argc, char *argv[]) {
     auto startGenerating = std::chrono::high_resolution_clock::now();
     for (auto & p : std::experimental::filesystem::directory_iterator(dirInput)){
         auto elapsedGenerating = std::chrono::high_resolution_clock::now() - startGenerating;
-        auto msecGenerating = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedGenerating).count();
-        tGen += msecGenerating;
+        auto usecGenerating = std::chrono::duration_cast<std::chrono::microseconds>(elapsedGenerating).count();
+        tGen += usecGenerating;
 
         try{
 
@@ -174,7 +174,7 @@ int main(int argc, char *argv[]) {
 
     std::cout << "----------------------------\n";
 
-    std::cout << "- Avg tGen of one pathNameImg: " << tGen/totphotomarked << " msec\n";
+    std::cout << "- Avg tGen of one pathNameImg: " << tGen/totphotomarked << " usec\n";
     std::cout << "- Avg tRead of one img: " << tRead/totphotomarked << " msec\n";
     std::cout << "- Avg tMark of one img: " << tMark/totphotomarked << " msec\n";
     std::cout << "- Avg tWrite of one img: " << tWrite/totphotomarked << " msec\n";

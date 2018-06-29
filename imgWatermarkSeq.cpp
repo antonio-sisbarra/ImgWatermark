@@ -87,7 +87,12 @@ int main(int argc, char *argv[]) {
     std::cout << "Working on imgs...\n";
 
     //Loop on all images
+    auto startGenerating = std::chrono::high_resolution_clock::now();
     for (auto & p : std::experimental::filesystem::directory_iterator(dirInput)){
+        auto elapsedGenerating = std::chrono::high_resolution_clock::now() - startGenerating;
+        auto msecGenerating = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedGenerating).count();
+        tGen += msecGenerating;
+
         try{
 
             auto startloading = std::chrono::high_resolution_clock::now();
@@ -143,6 +148,9 @@ int main(int argc, char *argv[]) {
         catch(CImgException& e){
             std::cerr << "Error on working on a img...\n";
         }
+
+        //For counting elapsed time for generation pathFilenameImg
+        startGenerating = std::chrono::high_resolution_clock::now();
     }
 
     auto totelapsed = std::chrono::high_resolution_clock::now() - start;
@@ -166,6 +174,7 @@ int main(int argc, char *argv[]) {
 
     std::cout << "----------------------------\n";
 
+    std::cout << "Avg tGen of one pathNameImg: " << tGen/totphotomarked << "\n";
     std::cout << "Avg tRead of one img: " << tRead/totphotomarked << "\n";
     std::cout << "Avg tMark of one img: " << tMark/totphotomarked << "\n";
     std::cout << "Avg tWrite of one img: " << tWrite/totphotomarked << "\n";
